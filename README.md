@@ -13,4 +13,9 @@ https://discord.io/glacier_
 Add me on discord :
 Cyclops#0003
 
+Deobfuscator analysis:
+
+Intermidate Level (AST & etc) : fully done
+Low Level : still in work.
+
 Deobfuscator TODO list : low-level control flow passes only, topological sorting for nodes with kosaraju's algorithm for SCC detection (for control flow obfuscation purposes), string decryption, undo test spam mutate garbage etc.
