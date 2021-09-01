@@ -20,4 +20,4 @@ Deobfuscator analysis:
 Intermediate Level (AST & etc) : fully done.
 Low Level : still in work.
 
-Deobfuscator TODO list : low-level control flow passes only, topological sorting for nodes with kosaraju's algorithm for SCC detection (better control flow output and ordered nodes.), string decryption, undo test spam mutate garbage.
+Deobfuscator TODO list : low-level control flow passes only: topological sorting for nodes with kosaraju's algorithm for SCC detection (better control flow output and ordered nodes.), string decryption, undo test spam mutate garbage.
