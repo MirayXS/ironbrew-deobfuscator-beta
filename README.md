@@ -13,6 +13,8 @@ https://discord.io/glacier_
 Add me on discord :
 Cyclops#0003
 
+# TODO
+
 Deobfuscator analysis:
 
 Intermediate Level (AST & etc) : fully done.
