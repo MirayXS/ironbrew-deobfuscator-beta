@@ -14,7 +14,7 @@ make sure you join this discord server :
 https://discord.io/glacier_
 
 Add me on discord :
-Cyclops#2732 (ID : 306127854658256896)
+Cyclops#0003 (ID : 306127854658256896)
 
 # TODO
 
