@@ -1,9 +1,9 @@
 # Ironbrew Deobfuscator
 
-a really big project (around 5k lines) i've worked on since late june 2021, still unfinished
+a really big project (around 5k lines), i've worked on since late june 2021, still unfinished
 released this one version for now (with removed some stuff such as source generator.), since im not planning on selling the deobfuscator and i have another stuff to deal with currently.
 
-the entire deobfuscator is AST level based.
+the entire deobfuscator is barebones AST level based, doesn't use anything related to lua source.
 
 tested with big scripts (without control flow yet) and works pretty good.
 
