@@ -183,7 +183,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 			}
 			else if (auto do_block = (*iterator)->as<ir::statement::do_block>()) {
 				if (do_block->body->body.size() == 0 && do_block->body->ret.has_value()) {
-					goto push_route;
+					new_block->body.push_back(*iterator);
+					break;
 				}
 			}
 
