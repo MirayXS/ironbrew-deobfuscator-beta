@@ -7,7 +7,7 @@ the entire deobfuscator is barebones AST level based, doesn't use anything relat
 
 tested with big scripts (without control flow yet) and works pretty good.
 
-everything in this project is made by me (expect some stuff i've credited people for.), and if you use any part of it you should atleast give me a credit.
+everything in this project is made by me (expect one/two things i've credited people for.), and if you use any part of it you should atleast give me a credit.
 
 if you need to talk with me about anything related to this project, i'd appreciate that.
 make sure you join this discord server :
