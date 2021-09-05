@@ -1,5 +1,3 @@
-#pragma once
-
 #include "./ast/ir/abstract_visitor_pattern.hpp"
 #include "./ast/ir/node.hpp"
 #include "loop_unrolled_bst.hpp"
