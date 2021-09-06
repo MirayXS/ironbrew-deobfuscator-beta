@@ -46,9 +46,9 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 				if (auto if_branch = if_statement->condition->as<ir::expression::binary_expression>()) {
 					if (auto left_string = if_branch->left->as<ir::expression::variable>()) {
 						if (left_string->to_string() == "virtual_opcode") {
-							std::cout << "yaaa\n";
 							if_statement->accept(this);
 							return false;
+							return true;
 						}
 					}
 				}
