@@ -55,21 +55,21 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
                             auto new_instruction = std::make_unique<vm_arch::instruction>(virtual_opcode, new_instruction_a);
 
-                            switch (instruction_bitfield_1) {
-                                case 0: { // abc
+                            switch (static_cast<enum vm_arch::instruction_type>(instruction_bitfield_1)) {
+                                case vm_arch::instruction_type::abc: {
                                     new_instruction->b = deserializer_helper_object->get_16_bits();
                                     new_instruction->c = deserializer_helper_object->get_16_bits();
                                     break;
                                 }
-                                case 1: { // abx
+                                case vm_arch::instruction_type::abx: {
                                     new_instruction->bx = deserializer_helper_object->get_32_bits();
                                     break;
                                 }
-                                case 2: { // asbx
+                                case vm_arch::instruction_type::asbx: {
                                     new_instruction->sbx = deserializer_helper_object->get_32_bits() - std::numeric_limits<unsigned short>::max() - 1;
                                     break;
                                 }
-                                case 3: { // asbxc?
+                                case vm_arch::instruction_type::asbxc: {
                                     new_instruction->sbx = deserializer_helper_object->get_32_bits() - std::numeric_limits<unsigned short>::max() - 1;
                                     new_instruction->c = deserializer_helper_object->get_16_bits();
                                     break;
