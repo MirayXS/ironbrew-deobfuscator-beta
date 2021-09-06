@@ -95,7 +95,7 @@ namespace deobf::vm_arch {
 		{ opcode::op_newstack, "newstack" }
 	};
 
-	enum class op_mode {
+	enum class instruction_mode {
 		a, // 8 bits
 		b, // 9 bits
 		c, // 9 bits
@@ -103,12 +103,13 @@ namespace deobf::vm_arch {
 		sbx, // signed bx
 	};
 
-	enum class op_type {
-		a,
-		ab,
-		ac,
+	enum class instruction_type {
 		abc,
 		abx,
 		asbx,
+		asbxc,
+
+		a,
+		ab,
 	};
 }
