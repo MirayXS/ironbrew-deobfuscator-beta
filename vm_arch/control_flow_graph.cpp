@@ -6,7 +6,7 @@
 namespace deobf::vm_arch::control_flow_graph {
 
 
-	std::shared_ptr<basic_block> generate_basic_blocks(std::unordered_map<std::size_t, std::shared_ptr<basic_block>>& block_references, std::size_t init_label, std::vector<std::unique_ptr<vm_arch::instruction>>& instructions, std::unordered_set<vm_arch::instruction*>& labels) {
+	std::shared_ptr<basic_block> generate_basic_blocks(block_reference_t& block_references, std::size_t init_label, std::vector<std::unique_ptr<vm_arch::instruction>>& instructions, std::unordered_set<vm_arch::instruction*>& labels) {
 		if (const auto result = block_references.find(init_label); result != block_references.cend()) {
 			return result->second;
 		}
@@ -85,9 +85,11 @@ namespace deobf::vm_arch::control_flow_graph {
 			}
 		}
 
-		std::unordered_map<std::size_t, std::shared_ptr<basic_block>> reference_block_map;
+		block_reference_t reference_block_map;
 
 		std::shared_ptr<basic_block> root_block = generate_basic_blocks(reference_block_map, 0, instructions, labels);
+
+		root_block->references = std::move(reference_block_map);
 
 		std::cout << "terminator test : " << root_block->target_block->target_block->is_terminator << std::endl;
 		for (auto& instr : root_block->next_block->instructions) {

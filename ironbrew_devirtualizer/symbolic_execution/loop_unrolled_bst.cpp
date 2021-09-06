@@ -1,5 +1,3 @@
-#pragma once
-
 #include "./ast/ir/abstract_visitor_pattern.hpp"
 #include "./ast/ir/node.hpp"
 #include "loop_unrolled_bst.hpp"
@@ -26,15 +24,15 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 		if (auto right_value = expression->right->as<ir::expression::numeral_literal>()) {
 			using operation_t = typename ir::expression::binary_expression::operation_t;
 
-			const auto& front = back_track.front().get();
+			const auto virtual_opcode = back_track.front().get().virtual_opcode;
 
 			switch (expression->operation) { // concerete execute for bound
 				case operation_t::le:
-					return front.virtual_opcode <= right_value->value; // this is a divide and conquer route, continue to next if statements
+					return virtual_opcode <= right_value->value; // this is a divide and conquer route, continue to next if statements
 				case operation_t::gt:
-					return front.virtual_opcode > right_value->value;
+					return virtual_opcode > right_value->value;
 				case operation_t::eq:
-					return front.virtual_opcode == right_value->value;
+					return virtual_opcode == right_value->value;
 			}
 		}
 
@@ -43,36 +41,44 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 
 	bool loop_unrolled_bst::accept(ir::statement::block* body)  {
 		// todo fix mem leak here?
-		if (auto if_statement = body->find_first_of<ir::statement::if_statement>(); if_statement.has_value()) {
-			if (auto if_branch = if_statement.value().get().condition->as<ir::expression::binary_expression>()) {
-				if (auto left_string = if_branch->left->as<ir::expression::variable>()) {
-					if (left_string->to_string() == "virtual_opcode") {
-						return true;
+		if (body->body.size() == 1) {
+			if (auto if_statement = body->body.at(0)->as<ir::statement::if_statement>()) { // check node of tree in BST
+				if (auto if_branch = if_statement->condition->as<ir::expression::binary_expression>()) {
+					if (auto left_string = if_branch->left->as<ir::expression::variable>()) {
+						if (left_string->to_string() == "virtual_opcode") {
+							std::cout << "yaaa\n";
+							if_statement->accept(this);
+							return false;
+						}
 					}
 				}
 			}
 		}
-		
+
 		if (back_track.empty()) {
+			std::cout << "empty.......\n";
 			return false;
 		}
 
 		// we have entered the final block, map it
 
 		if (auto memoized_result = memoized_virtuals.find(back_track.front().get().virtual_opcode); memoized_result != memoized_virtuals.cend()) {
-			std::cout << "got top:" << memoized_result->second.size() << std::endl;
+			std::cout << "got top:" << static_cast<int>(memoized_result->first) << std::endl;
 			for (auto& opcode : memoized_result->second) {
 				if (back_track.empty())
 					break;
 
-				back_track.front().get().op = opcode;
-				std::invoke(callback_functor, back_track.front(), nullptr);
+				auto front_instruction = back_track.front();
+				front_instruction.get().op = opcode;
+
+				std::invoke(callback_functor, front_instruction, nullptr);
 				back_track.pop_front();
 			}
 		}
 		else {
 			//std::cout << body->body.at(0)->to_string() << std::endl;
 			// call super op handler
+			std::cout << "front instr:" << back_track.front().get().virtual_opcode << std::endl;
 			handle(back_track.front(), body);
 		}
 		//std::cout << "done." << std::endl;
@@ -84,6 +90,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 
 	bool loop_unrolled_bst::accept(ir::statement::if_statement* if_stat) { // i couldve shorted this into 1 line, but changing the visitor pattern itself from the IR will affect other things.
 
+		std::cout << "stat:" << if_stat->to_string() << std::endl;
 		const auto root_condition = static_cast<ir::expression::binary_expression*>(if_stat->condition.get());
 
 		if (accept(root_condition)) {
@@ -106,7 +113,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 }

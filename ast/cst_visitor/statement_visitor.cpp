@@ -20,7 +20,7 @@ namespace deobf::ast {
 
 		ir::statement::managed_statement_list statements_body;
 		for (const auto statement : ctx->stat()) {
-			if (statement->SEMI() != nullptr)
+			if (statement->SEMI() != nullptr) // handle temp memory? (todo delete?)
 				continue;
 
 			auto statement_node = visitStat(statement).as<std::shared_ptr<ir::statement::statement>>();

@@ -75,7 +75,7 @@ namespace deobf::ironbrew_devirtualizer::devirtualizer_markers {
 				}
 			}
 
-			return false;
+			return true;
 		}
 
 		bool accept(ir::statement::while_statement* statement) override {

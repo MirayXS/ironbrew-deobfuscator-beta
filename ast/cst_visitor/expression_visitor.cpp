@@ -116,10 +116,12 @@ namespace deobf::ast {
 		}
 
 		std::shared_ptr<expression_t> expression_name = nullptr;
-		if (auto prefix_expression = ctx->varOrExp()->exp()) {
+
+		auto var_or_exp = ctx->varOrExp();
+		if (auto prefix_expression = var_or_exp->exp()) {
 			expression_name = visitExp(prefix_expression).as<std::shared_ptr<expression_t>>();
 		}
-		else if (auto prefix_variable = ctx->varOrExp()->var()) {
+		else if (auto prefix_variable = var_or_exp->var()) {
 			auto name = visitVar(prefix_variable).as<std::shared_ptr<expression_t>>();
 			expression_name = std::move(name);
 		}
@@ -287,9 +289,11 @@ namespace deobf::ast {
 		}
 
 		std::shared_ptr<expression_t> expression_name = nullptr;
-		if (auto prefix_expression = ctx->varOrExp()->exp())
+
+		auto var_or_exp = ctx->varOrExp();
+		if (auto prefix_expression = var_or_exp->exp())
 			expression_name = visitExp(prefix_expression).as<std::shared_ptr<expression_t>>();
-		else if (auto prefix_variable = ctx->varOrExp()->var())
+		else if (auto prefix_variable = var_or_exp->var())
 			expression_name = visitVar(prefix_variable).as<std::shared_ptr<expression_t>>();
 
 		if (call_parameters.empty())

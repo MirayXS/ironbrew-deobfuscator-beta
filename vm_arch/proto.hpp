@@ -19,7 +19,7 @@ namespace deobf::vm_arch {
 		double max_stack_size;
 		bool is_vararg;
 
-		std::string to_string() {
+		std::string print_chunk() {
 			auto sz = 0ul;
 			for (auto& instr : instructions) {
 				std::cout << '[' << sz << "] : " << vm_arch::opcode_map[instr->op] << ' ' << static_cast<long>(instr->a) << ' ' << static_cast<long>(instr->sbx) << ' ' << static_cast<long>(instr->c) << std::endl;

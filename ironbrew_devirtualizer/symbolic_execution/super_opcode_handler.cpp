@@ -100,7 +100,11 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 					propagator_visitor.local_dfs_stack.pop();
 				}
 
-				auto opcode_result = std::invoke(callback_functor, front_opcode, result); // forward result to client.
+				const auto opcode_result = std::invoke(callback_functor, front_opcode, result); // forward result to client.
+				if (opcode_result == vm_arch::opcode::op_invalid) {
+					throw std::runtime_error("invalid opcode?");
+				}
+
 				memoized_virtuals.at(main_virtual).push_back(opcode_result);
 			}
 
@@ -177,11 +181,17 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 					continue;
 				}
 			}
+			else if (auto do_block = (*iterator)->as<ir::statement::do_block>()) {
+				if (do_block->body->body.size() == 0 && do_block->body->ret.has_value()) {
+					new_block->body.push_back(*iterator);
+					break;
+				}
+			}
 
 			/*for (auto& child : (*iterator)->get_children<ir::expression::variable>()) {
 
 			}*/
-
+		push_route:
 			new_block->body.push_back(*iterator);
 		}
 

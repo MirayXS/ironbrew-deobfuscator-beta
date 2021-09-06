@@ -12,6 +12,10 @@
 
 #include "../vm_arch/control_flow_graph.hpp"
 
+
+// control flow optimizations
+#include "static_chunk_analysis/test_spam.hpp"
+
 namespace deobf::ironbrew_devirtualizer {
 	using namespace ast;
 
@@ -100,15 +104,15 @@ namespace deobf::ironbrew_devirtualizer {
 		search_tree = std::make_unique<symbolic_execution::loop_unrolled_bst>(bst_if_root);
 
 		static int invalidctr = 0;
-		search_tree->callback_functor = [this, &identifier_client](std::reference_wrapper<vm_arch::instruction>& instruction, ir::statement::block* path) -> vm_arch::opcode {
-			std::cout << "opcode:" << static_cast<int>(instruction.get().op) << std::endl;
-			if (instruction.get().op == vm_arch::opcode::op_invalid) { // didn't recongize the virtual yet.
+		search_tree->callback_functor = [this, &identifier_client](vm_arch::instruction& instruction, ir::statement::block* path) -> vm_arch::opcode {
+			//std::cout << "opcode:" << static_cast<int>(instruction.get().op) << std::endl;
+			if (instruction.op == vm_arch::opcode::op_invalid) { // didn't recongize the virtual yet.
 				auto result = identifier_client.handle(path);
 				std::cout << "res:" << vm_arch::opcode_map[result] << std::endl;
-				instruction.get().op = result;
+				instruction.op = result;
 			}
 
-			if (instruction.get().op == vm_arch::opcode::op_invalid && path != nullptr) {
+			if (instruction.op == vm_arch::opcode::op_invalid && path != nullptr) {
 				std::cout << "failed exception, info:" << std::endl;
 
 				for (auto& stat : path->body) {
@@ -119,15 +123,19 @@ namespace deobf::ironbrew_devirtualizer {
 				std::cout << "backtrack:" << search_tree->back_track.size() << std::endl;
 			}
 
-			return instruction.get().op;
+			return instruction.op;
 		};
 
 		proccess_chunk(new_chunk.get());
 
+		new_chunk->print_chunk();
+
 		//tree.set_callback(std::mem_fn(&opcode_identifiers::opcode_identifier_client::handle));
 
-		vm_arch::control_flow_graph::generate_graph(new_chunk.get()->instructions);
+		auto cfg_result = vm_arch::control_flow_graph::generate_graph(new_chunk.get()->instructions);
 
+		static_chunk_analysis::test_spam::run(cfg_result->references);
+		
 		dynamic_chunk_analysis::run_analysis_session(new_chunk.get());
 	}
 }
