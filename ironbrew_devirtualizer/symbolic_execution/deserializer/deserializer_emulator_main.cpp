@@ -102,6 +102,6 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
             }
         }
 
-        return std::move(proto);
+        return std::move(proto); // result proto
 	}
 }
