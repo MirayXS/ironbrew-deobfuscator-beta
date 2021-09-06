@@ -13,7 +13,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
                     for (auto i = 0ul; i < kst_max_size; ++i) {
                         const auto randomized_order_type = deserializer_helper_object->get_8_bits();
                         if (deserializer_ctx->constant_order_mapping.find(randomized_order_type) != deserializer_ctx->constant_order_mapping.cend()) {
-                            const auto kst_type = static_cast<enum constant_type>(deserializer_ctx->constant_order_mapping.at(randomized_order_type));
+                            const auto kst_type = deserializer_ctx->constant_order_mapping.at(randomized_order_type);
 
                             switch (kst_type) {
                                 case constant_type::string: {
