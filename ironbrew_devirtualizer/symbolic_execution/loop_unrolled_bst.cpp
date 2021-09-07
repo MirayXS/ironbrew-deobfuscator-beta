@@ -1,119 +1,204 @@
-#include "./ast/ir/abstract_visitor_pattern.hpp"
 #include "./ast/ir/node.hpp"
 #include "loop_unrolled_bst.hpp"
-#include "./ironbrew_devirtualizer/opcode_identifiers/identifier_base.hpp"
+#include "ironbrew_devirtualizer/devirtualizer_markers/marker_decorator.hpp"
 
 #include <algorithm>
 #include <numeric>
+#include <stack>
 
 namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 	using namespace ast;
 
-	//decltype(loop_unrolled_bst::callback_functor) loop_unrolled_bst::callback_handler;
+	// optimization passes for instructions aswell before forwarding to handler (removes dead code, unused registers)
+	struct instruction_propagator final : devirtualizer_markers::marker_decorator {
+		using marker_decorator::marker_decorator;
 
-	bool loop_unrolled_bst::accept(ir::expression::binary_expression* expression) {
-		if (back_track.empty())
-			return false;
+		bool accept(ir::statement::local_declaration* statement) override {
+			auto body_position = std::size_t{ };
+			for (auto& body_statement : statement->body) {
+				if (const auto result = instruction_indice_mapping.find(body_statement->to_string()); result != instruction_indice_mapping.cend()) {
+					const auto variable_name = statement->names.at(body_position)->to_string();
+					current_block->find_symbol(variable_name)->resolve_identifier = result->second;
+					local_dfs_stack.emplace(statement->shared_from_this());
+				}
 
-		if (auto left_value = expression->left->as<ir::expression::variable>()) {
-			if (left_value->to_string() != "virtual_opcode") {
-				return false;
+				++body_position;
 			}
+
+			return true;
 		}
 
-		if (auto right_value = expression->right->as<ir::expression::numeral_literal>()) {
-			using operation_t = typename ir::expression::binary_expression::operation_t;
-
-			const auto virtual_opcode = back_track.front().get().virtual_opcode;
-
-			switch (expression->operation) { // concerete execute for bound
-				case operation_t::le:
-					return virtual_opcode <= right_value->value; // this is a divide and conquer route, continue to next if statements
-				case operation_t::gt:
-					return virtual_opcode > right_value->value;
-				case operation_t::eq:
-					return virtual_opcode == right_value->value;
+		bool accept(ir::statement::block* statement) override {
+			// rebase block, etc for symbol table puropses.
+			if (statement->parent == rebase_group.first && current_block != nullptr) {
+				statement->parent = rebase_group.second;
 			}
+
+			return __super::accept(statement);
 		}
 
-		return false;
-	}
+		bool accept(ir::expression::variable* expression) override {
+			if (const auto result = instruction_indice_mapping.find(expression->to_string()); result != instruction_indice_mapping.cend()) {
+				// transform node to be in its single form
+				expression->suffixes.clear();
+				expression->name->as<ir::expression::string_literal>()->value = result->second;
+			}
 
-	bool loop_unrolled_bst::accept(ir::statement::block* body)  {
-		// todo fix mem leak here?
-		if (body->body.size() == 1) {
-			if (auto if_statement = body->body.at(0)->as<ir::statement::if_statement>()) { // check node of tree in BST
-				if (auto if_branch = if_statement->condition->as<ir::expression::binary_expression>()) {
-					if (auto left_string = if_branch->left->as<ir::expression::variable>()) {
-						if (left_string->to_string() == "virtual_opcode") {
-							if_statement->accept(this);
-							return false;
-							return true;
+			return __super::accept(expression);
+		}
+
+		std::stack<std::weak_ptr<ir::node>> local_dfs_stack;
+		std::pair<ir::statement::block*, ir::statement::block*> rebase_group;
+
+	private:
+		static inline std::map<std::string_view, std::string_view> instruction_indice_mapping {
+			{ "current_instruction[1]", "instruction_opcode_virtual" },
+			{ "current_instruction[2]", "instruction_opcode_a" },
+			{ "current_instruction[3]", "instruction_opcode_b" },
+			{ "current_instruction[4]", "instruction_opcode_c" },
+			//{ "current_instruction[5]", "instruction_opcode_unk" },
+		};
+	};
+
+	// handles opcodes & superops from body, and forwards them to callback_functor
+	void loop_unrolled_bst::handle(vm_arch::instruction& instruction, ir::statement::block* body) { // instruction = std::ref(chunk.at(x))
+		using name_type = typename ir::expression::name_list_t::value_type;
+		using variable_type = typename ir::expression::variable_list_t::value_type;
+		
+		instruction_propagator propagator_visitor{ "instruction_opcode_virtual", "instruction_opcode_a", "instruction_opcode_b", "instruction_opcode_c" };
+
+		
+		auto new_block = std::make_unique<ir::statement::block>(body); // parent is body for symbol search cases
+
+		propagator_visitor.rebase_group.first = body;
+
+		// IMPORTANT : make sure we have a symbol renamer before using this (important for producing hashes of declarations)
+		auto super_op_references = std::unordered_set<std::string>{ }; // stores hashes of declarations inside.
+
+		// memoization being done on visitor
+
+		memoized_virtuals.try_emplace(instruction.virtual_opcode, std::vector<vm_arch::opcode>{ });
+
+		const auto flush_body = [this, &propagator_visitor, &new_block, main_virtual = instruction.virtual_opcode]() {
+			const auto result = new_block.get();
+
+			if (!back_track.empty()) {
+				auto front_opcode = back_track.front();
+				back_track.pop_front();
+
+				// propagate instructions.
+				propagator_visitor.rebase_group.second = result;
+				result->accept(&propagator_visitor);
+
+				// handle garbage locals (todo better way?)
+				while (!propagator_visitor.local_dfs_stack.empty()) {
+					auto local = propagator_visitor.local_dfs_stack.top();
+					if (!local.expired()) {
+						auto shared_statement = local.lock().get();
+						if (auto iterator_result = std::find_if(result->body.begin(), result->body.end(), [&shared_statement](std::shared_ptr<ir::statement::statement> const& ptr) {
+								return shared_statement == ptr.get();
+							}); iterator_result != result->body.end()) {
+							result->body.erase(iterator_result);
 						}
 					}
+					propagator_visitor.local_dfs_stack.pop();
+				}
+
+				const auto opcode_result = std::invoke(callback_functor, front_opcode, result); // forward result to client.
+				if (opcode_result == vm_arch::opcode::op_invalid) {
+					throw std::runtime_error("invalid opcode?");
+				}
+
+				memoized_virtuals.at(main_virtual).push_back(opcode_result);
+			}
+
+			new_block.reset(new ir::statement::block); // todo new ir::statement::block(body) instead so we wont have to rebase? maybe reliable?
+		};
+
+		// are we currently handling super ops? super ops ALWAYS got their "virtualized instruction" as 0.
+		// handle local declares (super ops replace locals in opcode blocks on the topmost part of their scope)
+		auto iterator = body->body.cbegin();
+		if (back_track.size() > 1 && back_track.at(1).get().virtual_opcode == 0) {
+			for (; iterator != body->body.cend(); ++iterator) {
+				if (auto local_declare = (*iterator)->as<ir::statement::local_declaration>()) {
+					if (local_declare->body.size() == 0) {
+						const auto local_hash = std::accumulate(local_declare->names.cbegin(), local_declare->names.cend(), std::string{ }, [](auto& init, const name_type& second) -> decltype(auto) {
+							return init += second->value;
+						});
+						super_op_references.emplace(local_hash);
+						continue;
+					}
+				}
+				
+				break;
+			}
+		}
+
+		// handle super opcodes & general stuff
+		for (; iterator != body->body.end(); ++iterator) {
+			if (auto next_statement = std::next(iterator); next_statement != body->body.end()) {
+				const auto&& [first, second] = std::tie(*iterator, *next_statement);
+				const auto first_string = first->to_string();
+
+				if (first_string == "current_instruction = instructions[instruction_pointer]") {
+					continue;
+				}
+				else if (first_string == "instruction_pointer = ( instruction_pointer + 1 )" && second->to_string() == "current_instruction = instructions[instruction_pointer]") {
+					flush_body();
+					continue;
 				}
 			}
-		}
 
-		if (back_track.empty()) {
-			std::cout << "empty.......\n";
-			return false;
-		}
+			// even if there are multiple declarations of same variable we need to handle, mostly because of name collisions and they are being resolved at ironbrew, we STILL need to localize them for our own instruction block
+			if (auto variable_assign = (*iterator)->as<ir::statement::variable_assign>()) {
+				const auto local_hash = std::accumulate(variable_assign->variables.cbegin(), variable_assign->variables.cend(), std::string{ }, [](auto& init, const variable_type& second) -> decltype(auto) {
+					return init += second->to_string();
+				});
 
-		// we have entered the final block, map it
+				if (super_op_references.count(local_hash)) {
+					ir::expression::name_list_t local_names;
+					auto local_body = variable_assign->expressions; // keep reference to resources, for later opcodes.
 
-		if (auto memoized_result = memoized_virtuals.find(back_track.front().get().virtual_opcode); memoized_result != memoized_virtuals.cend()) {
-			std::cout << "got top:" << static_cast<int>(memoized_result->first) << std::endl;
-			for (auto& opcode : memoized_result->second) {
-				if (back_track.empty())
+					// lazy to zip iterate aswell
+					{
+						auto body_position = std::size_t{ };
+						for (const auto& reference : variable_assign->variables) {
+							const auto symbol_key = reference->to_string();
+							local_names.push_back(std::make_shared<ir::expression::string_literal>(symbol_key));
+							// and of course.. populate symbol table
+
+							if (body_position < local_body.size()) {
+								const auto body_element = local_body.at(body_position);
+
+								new_block->insert_symbol<false>(symbol_key, body_element);
+							}
+
+							body_position++; // not at ternary condition cus UB
+						}
+					}
+
+					auto new_local = std::make_shared<ir::statement::local_declaration>(std::move(local_names), local_body);
+
+					new_block->body.push_back(std::move(new_local));
+
+					variable_assign.reset(); // todo should we really do this?
+					continue;
+				}
+			}
+			else if (auto do_block = (*iterator)->as<ir::statement::do_block>()) {
+				if (do_block->body->body.size() == 0 && do_block->body->ret.has_value()) {
+					new_block->body.push_back(*iterator);
 					break;
-
-				auto front_instruction = back_track.front();
-				front_instruction.get().op = opcode;
-
-				std::invoke(callback_functor, front_instruction, nullptr);
-				back_track.pop_front();
+				}
 			}
-		}
-		else {
-			//std::cout << body->body.at(0)->to_string() << std::endl;
-			// call super op handler
-			std::cout << "front instr:" << back_track.front().get().virtual_opcode << std::endl;
-			handle(back_track.front(), body);
-		}
-		//std::cout << "done." << std::endl;
 
-		run_cycle();
+			/*for (auto& child : (*iterator)->get_children<ir::expression::variable>()) {
 
-		return false;
+			}*/
+		push_route:
+			new_block->body.push_back(*iterator);
+		}
+
+		flush_body(); // final body
 	}
-
-	bool loop_unrolled_bst::accept(ir::statement::if_statement* if_stat) { // i couldve shorted this into 1 line, but changing the visitor pattern itself from the IR will affect other things.
-
-		std::cout << "stat:" << if_stat->to_string() << std::endl;
-		const auto root_condition = static_cast<ir::expression::binary_expression*>(if_stat->condition.get());
-
-		if (accept(root_condition)) {
-			if_stat->body->accept(this);
-			return false;
-		}
-
-		for (const auto& [condition, body] : if_stat->else_if_statements) {
-			const auto binary_condition = static_cast<ir::expression::binary_expression*>(condition.get());
-			if (accept(binary_condition)) {
-				body->accept(this);
-				return false;
-			}
-		}
-
-		if (if_stat->else_body.has_value()) {
-			if (accept(if_stat->else_body.value().get())) {
-				if_stat->body->accept(this);
-				return false;
-			}
-		}
-
-		return false;
-	}
-
 }
