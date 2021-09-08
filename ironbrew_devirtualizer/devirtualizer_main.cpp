@@ -127,7 +127,7 @@ namespace deobf::ironbrew_devirtualizer {
 		};
 
 		std::thread([this](const deobf::vm_arch::proto* main_proto) {
-			return proccess_chunk(std::forward<const deobf::vm_arch::proto*>(main_proto));
+			return proccess_chunk(decltype(main_proto)(main_proto));
 		}, new_chunk.get()).join();
 
 		new_chunk->print_chunk();
