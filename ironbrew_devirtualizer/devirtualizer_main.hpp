@@ -10,7 +10,7 @@
 namespace deobf::ironbrew_devirtualizer {
 	struct ironbrew_devirtualizer final {
 		void devirtualize();
-		void proccess_chunk(vm_arch::proto* proto);
+		void proccess_chunk(const vm_arch::proto* proto) const;
 
 		explicit ironbrew_devirtualizer(ast::ir::statement::block* context) :
 			context(context)
