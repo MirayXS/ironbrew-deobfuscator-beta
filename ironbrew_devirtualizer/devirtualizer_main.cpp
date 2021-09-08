@@ -19,7 +19,7 @@
 namespace deobf::ironbrew_devirtualizer {
 	using namespace ast;
 
-	void ironbrew_devirtualizer::proccess_chunk(const vm_arch::proto* proto) {
+	void ironbrew_devirtualizer::proccess_chunk(const vm_arch::proto* proto) const {
 		for (const auto& opcode : proto->instructions) {
 			search_tree->back_track.emplace_back(*opcode.get());
 		}
