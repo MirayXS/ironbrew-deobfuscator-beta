@@ -143,18 +143,12 @@ namespace deobf::ast::ir {
                 auto head_scope = this;
                 if constexpr (is_global) // not being optimized?
                     for (; head_scope->parent != nullptr; head_scope = head_scope->parent);
-
-                if (const auto result = head_scope->symbol_table.find(symbol_name); result != head_scope->symbol_table.cend()) // handle redeclarations?
-                    head_scope->symbol_table.erase(result);
-
-                return head_scope->symbol_table.emplace(symbol_name, std::make_unique<symbol_info>(symbol_name, symbol_value));
+ 
+                return head_scope->symbol_table.insert_or_assign(symbol_name, std::make_unique<symbol_info>(symbol_name, symbol_value)); // handles redeclarations
             }
 
             auto insert_symbol(const std::string& symbol_name) {
-                if (const auto result = symbol_table.find(symbol_name); result != symbol_table.cend()) // handle redeclarations?
-                    symbol_table.erase(result);
-
-                return symbol_table.emplace(symbol_name, std::make_unique<symbol_info>(symbol_name));
+                return symbol_table.insert_or_assign(symbol_name, std::make_unique<symbol_info>(symbol_name));
             }
 
             symbol_info* find_symbol(const std::string& symbol_name) const {
