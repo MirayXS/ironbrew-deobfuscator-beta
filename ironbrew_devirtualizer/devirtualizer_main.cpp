@@ -19,7 +19,7 @@
 namespace deobf::ironbrew_devirtualizer {
 	using namespace ast;
 
-	void ironbrew_devirtualizer::proccess_chunk(vm_arch::proto* proto) {
+	void ironbrew_devirtualizer::proccess_chunk(const vm_arch::proto* proto) {
 		for (const auto& opcode : proto->instructions) {
 			search_tree->back_track.emplace_back(*opcode.get());
 		}
@@ -126,8 +126,8 @@ namespace deobf::ironbrew_devirtualizer {
 			return instruction.op;
 		};
 
-		std::thread([this](deobf::vm_arch::proto* main_proto) {
-			return proccess_chunk(std::forward<deobf::vm_arch::proto*>(main_proto));
+		std::thread([this](const deobf::vm_arch::proto* main_proto) {
+			return proccess_chunk(std::forward<const deobf::vm_arch::proto*>(main_proto));
 		}, new_chunk.get()).join();
 
 		new_chunk->print_chunk();
