@@ -1,7 +1,6 @@
 # Ironbrew Deobfuscator
 
-a really big project (around 5k lines), i've worked on since late june 2021, still unfinished
-released this one version for now (with removed some stuff such as source generator.), since im not planning on selling the deobfuscator and i have another stuff to deal with currently.
+a really big project built on C++17 which is around 5k lines or more, i've been working on it since late june 2021, left still unfinished, and i've released this one version for now (with removed some stuff such as source generator.), since im not planning on selling the deobfuscator and i have another stuff to deal with currently.
 
 the entire deobfuscator is barebones AST level based, doesn't use anything related to lua source.
 
