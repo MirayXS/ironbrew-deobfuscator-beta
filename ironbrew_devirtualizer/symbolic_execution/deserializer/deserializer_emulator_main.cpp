@@ -12,10 +12,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
                     const auto kst_max_size = deserializer_helper_object->get_32_bits();
                     for (auto i = 0ul; i < kst_max_size; ++i) {
                         const auto randomized_order_type = deserializer_helper_object->get_8_bits();
-                        if (deserializer_ctx->constant_order_mapping.find(randomized_order_type) != deserializer_ctx->constant_order_mapping.cend()) {
-                            const auto kst_type = deserializer_ctx->constant_order_mapping.at(randomized_order_type);
-
-                            switch (kst_type) {
+                        if (const auto kst_type = deserializer_ctx->constant_order_mapping.find(randomized_order_type); kst_type != deserializer_ctx->constant_order_mapping.cend()) {
+                            switch (kst_type->second) {
                                 case constant_type::string: {
                                     proto->constants.push_back(std::make_unique<vm_arch::constant>(deserializer_helper_object->get_string()));
                                     break;
