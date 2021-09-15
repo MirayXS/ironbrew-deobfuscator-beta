@@ -30,7 +30,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
 		std::vector<process_order> chunk_order{ }; // todo reserve for enum count?
 
-		std::map<std::uint8_t, constant_type> constant_order_mapping{ };
+		std::map<const std::uint8_t, constant_type> constant_order_mapping{ };
 
 		/*struct {
 			constant_type string_order, boolean_order, number_order;
