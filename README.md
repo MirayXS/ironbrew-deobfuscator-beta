@@ -13,12 +13,12 @@ if you need to talk with me about anything related to this project, i'd apprecia
 Add me on discord :
 Cyclops#0001 (ID : 306127854658256896)
 
-# TODO
-
-Deobfuscator analysis:
+# Deobfuscator Analysis
 
 Intermediate Level (AST & etc) : fully done.
 Low Level : still in work.
+
+# TODO
 
 Deobfuscator TODO list : low-level control flow passes only: topological sorting for nodes with kosaraju's algorithm for SCC detection (better control flow output and ordered nodes.), string decryption, undo test spam mutate garbage,
 also do we need to do inlining ? not being really used as much in scripts, on inlining instead of MOVE instructions and CALL replaced as JMP to relative offsets
