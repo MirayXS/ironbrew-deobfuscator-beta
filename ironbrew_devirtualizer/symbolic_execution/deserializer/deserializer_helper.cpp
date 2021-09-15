@@ -12,7 +12,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         const auto lhs = (number / std::pow(2, i - 1));
         const auto rhs = std::pow(2, (j - 1) - (i - 1) + 1);
 
-        return std::floor(std::fmodf(lhs, rhs));
+        return std::fmodf(lhs, rhs);
     }
     
     const std::uint8_t deserializer_helper::get_8_bits() { // could been done with reinterpret_cast on address
