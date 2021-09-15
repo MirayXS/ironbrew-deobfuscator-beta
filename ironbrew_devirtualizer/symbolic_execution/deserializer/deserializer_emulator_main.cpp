@@ -55,7 +55,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
                             auto new_instruction = std::make_unique<vm_arch::instruction>(virtual_opcode, new_instruction_a);
 
-                            switch (static_cast<enum vm_arch::instruction_type>(instruction_bitfield_1)) {
+                            switch (const auto instruction_type = static_cast<enum vm_arch::instruction_type>(instruction_bitfield_1)) {
                                 case vm_arch::instruction_type::abc: {
                                     new_instruction->b = deserializer_helper_object->get_16_bits();
                                     new_instruction->c = deserializer_helper_object->get_16_bits();
@@ -102,6 +102,6 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
             }
         }
 
-        return std::move(proto); // result proto
+        return std::move(proto);
 	}
 }
