@@ -8,10 +8,7 @@ tested with big scripts (without control flow yet) and works pretty good.
 
 everything in this project is made by me (expect one/two things i've credited people for.), and if you use any part of it you should atleast give me a credit.
 
-if you need to talk with me about anything related to this project, i'd appreciate that.
-
-Add me on discord :
-Cyclops#0001 (ID : 306127854658256896)
+if you need to talk with me about anything related to this project, i'd appreciate that, the discord can be found in my profile.
 
 # Deobfuscator Analysis
 
