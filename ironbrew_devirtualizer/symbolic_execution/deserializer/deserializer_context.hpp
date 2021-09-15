@@ -17,7 +17,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
 	constexpr std::size_t max_process_order = 5;
 
-	enum class constant_type : std::uint8_t {
+	enum class constant_type : const std::uint8_t {
 		string,
 		number,
 		boolean,
