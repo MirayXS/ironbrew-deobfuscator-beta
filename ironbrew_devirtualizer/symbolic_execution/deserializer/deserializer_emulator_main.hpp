@@ -24,8 +24,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 				compression_utilities::unescape_vm_string(vm_string) :
 				compression_utilities::decompress_vm_string(vm_string), xor_key);
 
-			symoblic_deserializer symbex_deserializer(deserializer_ctx.get());
-			symbex_deserializer.run();
+			symoblic_deserializer{ deserializer_ctx.get() }.run(); // run symbex deserializer to populate context with information
 		}
 
 	private:
