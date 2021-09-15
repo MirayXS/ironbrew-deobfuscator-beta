@@ -92,7 +92,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
                 case process_order::protos: {
                     const auto proto_max_size = deserializer_helper_object->get_32_bits();
                     for (auto i = 0ul; i < proto_max_size; ++i)
-                        proto->protos.push_back(std::move(deserialize()));
+                        proto->protos.emplace_back(deserialize());
+
                     break;
                 }
                 case process_order::parameters: {
