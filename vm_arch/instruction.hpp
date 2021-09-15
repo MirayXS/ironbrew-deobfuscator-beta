@@ -8,10 +8,12 @@ namespace deobf::vm_arch {
 		vm_arch::opcode op{ };
 		double virtual_opcode;
 		std::uint16_t a;
-		std::uint16_t b;
-		std::uint16_t c;
-		std::uint32_t bx;
-		std::int32_t sbx;
+
+		// optional parameters
+		std::uint16_t b{ };
+		std::uint16_t c{ };
+		std::uint32_t bx{ };
+		std::int32_t sbx{ };
 
 		/*union { // truncated to 2 bytes
 			struct {
