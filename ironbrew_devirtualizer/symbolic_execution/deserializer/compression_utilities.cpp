@@ -20,7 +20,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
             std::unique_ptr<char[]> data_block{ new char[read_offset] }; // lazy to make_unique
             compression_stream.read(data_block.get(), read_offset);
 
-            return strtol(data_block.release(), nullptr, 36);
+            return strtol(data_block.get(), nullptr, 36);
         };
 
         // ignore this shitty code ( took from ironbrew lua )
