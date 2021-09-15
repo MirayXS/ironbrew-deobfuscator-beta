@@ -11,7 +11,7 @@ everything in this project is made by me (expect one/two things i've credited pe
 if you need to talk with me about anything related to this project, i'd appreciate that.
 
 Add me on discord :
-Cyclops#0003 (ID : 306127854658256896)
+Cyclops#0001 (ID : 306127854658256896)
 
 # TODO
 
