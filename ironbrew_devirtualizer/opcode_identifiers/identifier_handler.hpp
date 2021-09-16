@@ -10,7 +10,7 @@
 namespace deobf::ironbrew_devirtualizer::opcode_identifiers {
 	using namespace ast;
 
-	// basic handler interface
+	// abstract handler interface
 	struct handler_interface {
 	public:
 		virtual handler_interface* set_next_handler(std::unique_ptr<handler_interface>&& handler) = 0; // forward function
@@ -20,7 +20,7 @@ namespace deobf::ironbrew_devirtualizer::opcode_identifiers {
 	};
 
 
-	// abstract handlers
+	// basic handler
 	struct basic_opcode_handler : public handler_interface {
 		handler_interface* set_next_handler(std::unique_ptr<handler_interface>&& handler) override;
 
