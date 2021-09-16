@@ -62,8 +62,12 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 
 	// handles opcodes & superops from body, and forwards them to callback_functor
 	void loop_unrolled_bst::handle(vm_arch::instruction& instruction, ir::statement::block* body) { // instruction = std::ref(chunk.at(x))
+		using name_type = typename ir::expression::name_list_t::value_type;
+		using variable_type = typename ir::expression::variable_list_t::value_type;
+		
 		instruction_propagator propagator_visitor{ "instruction_opcode_virtual", "instruction_opcode_a", "instruction_opcode_b", "instruction_opcode_c" };
 
+		
 		auto new_block = std::make_unique<ir::statement::block>(body); // parent is body for symbol search cases
 
 		propagator_visitor.rebase_group.first = body;
@@ -118,7 +122,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 			for (; iterator != body->body.cend(); ++iterator) {
 				if (auto local_declare = (*iterator)->as<ir::statement::local_declaration>()) {
 					if (local_declare->body.size() == 0) {
-						const auto local_hash = std::accumulate(local_declare->names.cbegin(), local_declare->names.cend(), std::string{ }, [](auto& init, const typename ir::expression::name_list_t::value_type& second) -> decltype(auto) {
+						const auto local_hash = std::accumulate(local_declare->names.cbegin(), local_declare->names.cend(), std::string{ }, [](auto& init, const name_type& second) -> decltype(auto) {
 							return init += second->value;
 						});
 						super_op_references.emplace(local_hash);
@@ -147,7 +151,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 
 			// even if there are multiple declarations of same variable we need to handle, mostly because of name collisions and they are being resolved at ironbrew, we STILL need to localize them for our own instruction block
 			if (auto variable_assign = (*iterator)->as<ir::statement::variable_assign>()) {
-				const auto local_hash = std::accumulate(variable_assign->variables.cbegin(), variable_assign->variables.cend(), std::string{ }, [](auto& init, const typename ir::expression::variable_list_t::value_type& second) -> decltype(auto) {
+				const auto local_hash = std::accumulate(variable_assign->variables.cbegin(), variable_assign->variables.cend(), std::string{ }, [](auto& init, const variable_type& second) -> decltype(auto) {
 					return init += second->to_string();
 				});
 
