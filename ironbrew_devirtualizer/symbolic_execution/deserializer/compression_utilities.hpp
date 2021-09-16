@@ -10,7 +10,7 @@
 #include <sstream>
 
 namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
-	// todo class instead?
+	// todo class singleton with static functions instead?
 	namespace compression_utilities {
 		const std::string decompress_vm_string(std::string_view vm_string); // uses some cringe impelemenation LZW compression
 		const std::string unescape_vm_string(std::string_view vm_string);
