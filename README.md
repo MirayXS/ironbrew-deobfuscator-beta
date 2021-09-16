@@ -10,6 +10,10 @@ everything in this project is made by me (expect one thing i've credited people 
 
 if you need to talk with me about anything related to this project, i'd appreciate that, the discord can be found in my profile.
 
+
+# NOTES
+this project can't be compiled by users yet since unfinished, only if you want you can use ANTLR runtime and generate lua parser files with the ANTLR Lua.g4 grammar file.
+
 # Deobfuscator Analysis
 
 Intermediate Level (AST & etc) : fully done.
