@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+// notes for this version: std::copy might be inefficent due to some factors and there's a need to change something
+
 namespace deobf::ast::ir::statement {
 
 	// return statement
