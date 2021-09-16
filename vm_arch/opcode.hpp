@@ -49,9 +49,10 @@ namespace deobf::vm_arch {
 
 		// custom vm opcodes
 		op_newstack,
+		op_settop,
 	};
 
-	static inline std::unordered_map<vm_arch::opcode, std::string> opcode_map {
+	static inline std::unordered_map<vm_arch::opcode, std::string_view> opcode_map {
 		{ opcode::op_invalid, "invalid" },
 
 		{ opcode::op_move, "move" },
@@ -92,7 +93,10 @@ namespace deobf::vm_arch {
 		{ opcode::op_close, "close" },
 		{ opcode::op_closure, "closure" },
 		{ opcode::op_vararg, "vararg" },
-		{ opcode::op_newstack, "newstack" }
+
+		// custom vm opcodes
+		{ opcode::op_newstack, "newstack" },
+		{ opcode::op_settop, "settop" },
 	};
 
 	enum class instruction_mode {
