@@ -40,7 +40,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 
 	//template <typename handler_t>
 	struct loop_unrolled_bst final : ir::abstract_visitor_pattern {
-		std::function<vm_arch::opcode(std::reference_wrapper<vm_arch::instruction>&, ir::statement::block*)> callback_functor;
+		std::function<vm_arch::opcode(vm_arch::instruction&, ir::statement::block*)> callback_functor;
 		std::deque<std::reference_wrapper<vm_arch::instruction>> back_track;
 
 		// opcode handler routine
