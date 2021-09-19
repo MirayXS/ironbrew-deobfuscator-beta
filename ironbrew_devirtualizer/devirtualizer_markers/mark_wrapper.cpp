@@ -11,12 +11,12 @@ namespace deobf::ironbrew_devirtualizer::devirtualizer_markers {
 		
 		std::once_flag has_visited_for;
 
-		static inline std::map<std::string_view, std::string_view> result_indice_mapping {
+		static inline std::unordered_map<std::string_view, std::string_view> result_indice_mapping {
 			{ "deserialize_result[1]", "instructions" },
 			{ "deserialize_result[2]", "constants" },
 			{ "deserialize_result[3]", "protos" }, // will that be different when theres no deserialize_result[4] ?
 			{ "deserialize_result[4]", "parameters" },
-			{ "1", "instruction_point" },
+			{ "1", "instruction_pointer" },
 			{ "-( 1 )", "stack_top" },
 		};
 
@@ -48,6 +48,10 @@ namespace deobf::ironbrew_devirtualizer::devirtualizer_markers {
 				// other stuff
 				else if (body_string == "pack_return") {
 					current_block->find_symbol(variable_name)->resolve_identifier = body_string;
+				}
+				else if (const auto result = result_indice_mapping.find(body_string); result != result_indice_mapping.cend()) {
+					current_block->find_symbol(variable_name)->resolve_identifier = result->second;
+					result_indice_mapping.erase(body_string);
 				}
 			}
 
