@@ -51,7 +51,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 		std::pair<ir::statement::block*, ir::statement::block*> rebase_group;
 
 	private:
-		static inline std::map<std::string_view, std::string_view> instruction_indice_mapping {
+		static inline std::unordered_map<std::string_view, std::string_view> instruction_indice_mapping {
 			{ "current_instruction[1]", "instruction_opcode_virtual" },
 			{ "current_instruction[2]", "instruction_opcode_a" },
 			{ "current_instruction[3]", "instruction_opcode_b" },
@@ -67,7 +67,6 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 		
 		static instruction_propagator propagator_visitor{ "instruction_opcode_virtual", "instruction_opcode_a", "instruction_opcode_b", "instruction_opcode_c" };
 
-		
 		auto new_block = std::make_unique<ir::statement::block>(body); // parent is body for symbol search cases
 
 		propagator_visitor.rebase_group.first = body;
@@ -95,6 +94,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 					auto local = propagator_visitor.local_dfs_stack.top();
 					if (!local.expired()) {
 						auto shared_statement = local.lock().get();
+
 						if (auto iterator_result = std::find_if(result->body.begin(), result->body.end(), [&shared_statement](std::shared_ptr<ir::statement::statement> const& ptr) {
 								return shared_statement == ptr.get();
 							}); iterator_result != result->body.end()) {
