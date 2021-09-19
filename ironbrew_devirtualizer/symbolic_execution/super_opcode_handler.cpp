@@ -65,7 +65,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 		using name_type = typename ir::expression::name_list_t::value_type;
 		using variable_type = typename ir::expression::variable_list_t::value_type;
 		
-		instruction_propagator propagator_visitor{ "instruction_opcode_virtual", "instruction_opcode_a", "instruction_opcode_b", "instruction_opcode_c" };
+		static instruction_propagator propagator_visitor{ "instruction_opcode_virtual", "instruction_opcode_a", "instruction_opcode_b", "instruction_opcode_c" };
 
 		
 		auto new_block = std::make_unique<ir::statement::block>(body); // parent is body for symbol search cases
@@ -79,7 +79,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 
 		memoized_virtuals.try_emplace(instruction.virtual_opcode, std::vector<vm_arch::opcode>{ });
 
-		const auto flush_body = [this, &propagator_visitor, &new_block, main_virtual = instruction.virtual_opcode]() {
+		const auto flush_body = [this, &new_block, main_virtual = instruction.virtual_opcode]() {
 			const auto result = new_block.get();
 
 			if (!back_track.empty()) {
