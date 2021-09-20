@@ -104,7 +104,7 @@ namespace deobf::ironbrew_devirtualizer {
 		search_tree = std::make_unique<symbolic_execution::loop_unrolled_bst>(bst_if_root);
 
 		static int invalidctr = 0;
-		search_tree->callback_functor = [&](vm_arch::instruction& instruction, ir::statement::block* path) -> vm_arch::opcode {
+		search_tree->callback_functor = [&](vm_arch::instruction& instruction, ir::statement::block* path = nullptr) -> vm_arch::opcode {
 			//std::cout << "opcode:" << static_cast<int>(instruction.get().op) << std::endl;
 			if (instruction.op == vm_arch::opcode::op_invalid) { // didn't recongize the virtual yet.
 				auto result = identifier_client.handle(path);
