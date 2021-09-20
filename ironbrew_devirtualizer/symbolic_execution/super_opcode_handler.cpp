@@ -90,7 +90,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 				result->accept(&propagator_visitor);
 
 				// handle garbage locals (todo better way?)
-				while (!propagator_visitor.local_dfs_stack.empty()) {
+				for (; !propagator_visitor.local_dfs_stack.empty(); propagator_visitor.local_dfs_stack.pop()) {
 					auto local = propagator_visitor.local_dfs_stack.top();
 					if (!local.expired()) {
 						auto shared_statement = local.lock().get();
@@ -101,7 +101,6 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 							result->body.erase(iterator_result);
 						}
 					}
-					propagator_visitor.local_dfs_stack.pop();
 				}
 
 				const auto opcode_result = std::invoke(callback_functor, front_opcode, result); // forward result to client.
