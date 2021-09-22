@@ -373,7 +373,6 @@ namespace deobf::ast::ir {
         };
 
         struct if_statement final : public statement {
-            // wanted std::map before, but there is a problem with ordering somewhat?, also we need direct access to statements in the container, so why not a vector instead? 
             using multi_statements = std::vector<std::pair<std::shared_ptr<expression_t>, std::shared_ptr<block>>>;
 
             std::shared_ptr<expression_t> condition;
