@@ -18,7 +18,7 @@ namespace deobf::ast::ir {
         struct string_literal;
         struct name_and_args;
         struct variable;
-        
+
         using expression_list_t = std::vector<std::shared_ptr<expression>>;
         using name_and_args_t = std::vector<std::shared_ptr<name_and_args>>;
         using variable_list_t = std::vector<std::shared_ptr<expression>>;  // variables are expressions aswell, but for more context make variable_list_t
@@ -26,7 +26,7 @@ namespace deobf::ast::ir {
     }
 
     using expression_t = typename expression::expression;
-    
+
 
     /*
         stat
@@ -80,7 +80,7 @@ namespace deobf::ast::ir {
             void accept(abstract_visitor_pattern* visitor) override;
         };
 
-        static const std::unordered_set<std::string> known_symbol_names {
+        static const std::unordered_set<std::string> known_symbol_names{
             "string.byte",
             "string.char",
             "string.sub",
@@ -135,7 +135,7 @@ namespace deobf::ast::ir {
         struct block final : public statement {
             managed_statement_list body;
             std::optional<std::shared_ptr<return_statement>> ret; // return stat
-            
+
             block* parent = nullptr;
 
             template <const bool is_global, typename symbol_type, typename = std::enable_if_t<std::is_base_of<statement, symbol_type>::value>>
@@ -143,7 +143,7 @@ namespace deobf::ast::ir {
                 auto head_scope = this;
                 if constexpr (is_global) // not being optimized?
                     for (; head_scope->parent != nullptr; head_scope = head_scope->parent);
- 
+
                 return head_scope->symbol_table.insert_or_assign(symbol_name, std::make_unique<symbol_info>(symbol_name, symbol_value)); // handles redeclarations
             }
 
@@ -182,7 +182,7 @@ namespace deobf::ast::ir {
 
             void accept(abstract_visitor_pattern* visitor) override;
 
-        //private:
+        private:
             std::unordered_map<std::string, std::unique_ptr<symbol_info>> symbol_table;
         };
 
@@ -342,7 +342,7 @@ namespace deobf::ast::ir {
             std::string to_string() const override;
 
             std::vector<std::shared_ptr<node>> get_children() const override;
-            
+
             explicit for_in(ir::expression::name_list_t names, ir::expression::expression_list_t expressions, std::shared_ptr<block> body) :
                 names(std::move(names)),
                 expressions(std::move(expressions)),
