@@ -12,7 +12,7 @@ namespace deobf::ironbrew_devirtualizer::opcode_identifiers {
 
 	// abstract handler interface
 	struct handler_interface {
-	public:
+	public: // todo: operator= instead of set_next_handler?
 		virtual handler_interface* set_next_handler(std::unique_ptr<handler_interface>&& handler) = 0; // forward function
 		virtual vm_arch::opcode handle(ir::statement::block* path) = 0;
 
