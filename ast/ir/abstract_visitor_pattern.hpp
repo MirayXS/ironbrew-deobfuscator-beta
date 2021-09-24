@@ -5,10 +5,11 @@
 #include "statement.hpp"
 
 // switched to macros unlike before having to handle 69420kb
-#define MAKE_BASE_VISITOR(child, parent) virtual bool accept(child* subject) { return accept(static_cast<parent*>(subject)); } // todo return optinal node instead of a boolean to accept another stats? (for optimizations)
 
 namespace deobf::ast::ir {
 	struct abstract_visitor_pattern { // abstract visitor pattern interface
+#define MAKE_BASE_VISITOR(child, parent) virtual bool accept(child* subject) { return accept(static_cast<parent*>(subject)); } // todo return optinal node instead of a boolean to accept another stats? (for optimizations)
+
 		// basic node
 		virtual bool accept(node*) { return true; };
 
@@ -51,5 +52,7 @@ namespace deobf::ast::ir {
 		MAKE_BASE_VISITOR(statement::while_statement, statement::statement);
 
 		virtual ~abstract_visitor_pattern() noexcept(true) = default;
+
+#undef MAKE_BASE_VISITOR
 	};
 }
