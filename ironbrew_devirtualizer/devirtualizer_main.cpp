@@ -1,6 +1,7 @@
 #include "devirtualizer_main.hpp"
 #include <deque>
 #include <functional>
+#include <future>
 
 #include "devirtualizer_markers/mark_deserializer.hpp"
 #include "devirtualizer_markers/mark_binary_functions.hpp"
@@ -19,7 +20,11 @@
 namespace deobf::ironbrew_devirtualizer {
 	using namespace ast;
 
+	std::recursive_mutex ironbrew_devirtualizer::devirtualizer_mutex;
+
 	void ironbrew_devirtualizer::proccess_chunk(const vm_arch::proto* proto) const {
+		devirtualizer_mutex.lock();
+
 		for (const auto& opcode : proto->instructions) {
 			search_tree->back_track.emplace_back(*opcode.get());
 		}
@@ -29,6 +34,8 @@ namespace deobf::ironbrew_devirtualizer {
 		for (auto& proto : proto->protos) {
 			proccess_chunk(proto.get());
 		}
+
+		devirtualizer_mutex.unlock();
 	}
 
 	void ironbrew_devirtualizer::devirtualize() {
@@ -126,9 +133,15 @@ namespace deobf::ironbrew_devirtualizer {
 			return instruction.op;
 		};
 
+		/*
 		std::thread([this](const deobf::vm_arch::proto* main_proto) {
 			return proccess_chunk(std::forward<decltype(main_proto)>(main_proto));
 		}, new_chunk.get()).join();
+		*/
+
+
+		auto process_job = std::async(std::launch::async, &ironbrew_devirtualizer::proccess_chunk, this, new_chunk.get());
+		process_job.wait();
 
 		new_chunk->print_chunk();
 
