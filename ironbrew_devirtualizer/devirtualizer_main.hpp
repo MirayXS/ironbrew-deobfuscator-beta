@@ -19,6 +19,7 @@ namespace deobf::ironbrew_devirtualizer {
 		{ }
 	private:
 		static std::recursive_mutex devirtualizer_mutex;
+		// todo upgrade to C++20 counting_semaphore's so we could run multiple threads and manipulate multiple chunks at same time, with a lock and custom counter.
 
 		ast::ir::statement::block* context; // deobfuscation context
 		std::unique_ptr<symbolic_execution::loop_unrolled_bst> search_tree;
