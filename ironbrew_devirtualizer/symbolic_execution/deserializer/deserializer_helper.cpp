@@ -15,15 +15,14 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         return std::fmodf(lhs, rhs);
     }
     
-    const std::uint8_t deserializer_helper::get_8_bits() { // could been done with reinterpret_cast on address
+    const std::uint8_t deserializer_helper::get_8_bits() {
         return static_cast<std::uint8_t>(managed_deserializer_string.get() ^ vm_xor_key);
     }
 
-    const std::uint16_t deserializer_helper::get_16_bits() { // could been done with reinterpret_cast on address
+    const std::uint16_t deserializer_helper::get_16_bits() {
         std::unique_ptr<unsigned char[]> data_block{ new unsigned char[2] }; // lazy to make_unique
         managed_deserializer_string.read(reinterpret_cast<char*>(data_block.get()), 2);
 
-        // gonna be loop unrolled by the compiler anyway idc
         for (auto i = 0u; i < 2; ++i)
             data_block[i] ^= vm_xor_key;
 
