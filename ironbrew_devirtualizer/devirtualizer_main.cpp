@@ -32,7 +32,7 @@ namespace deobf::ironbrew_devirtualizer {
 		search_tree->run_cycle();
 
 		for (auto& proto : proto->protos) {
-			proccess_chunk(proto.get());
+			std::async(std::launch::deferred, &ironbrew_devirtualizer::proccess_chunk, this, proto.get());
 		}
 
 		devirtualizer_mutex.unlock();
@@ -140,8 +140,8 @@ namespace deobf::ironbrew_devirtualizer {
 		*/
 
 
-		auto process_job = std::async(std::launch::async, &ironbrew_devirtualizer::proccess_chunk, this, new_chunk.get());
-		process_job.wait();
+		auto proccess_future_job = std::async(std::launch::async, &ironbrew_devirtualizer::proccess_chunk, this, new_chunk.get());
+		proccess_future_job.wait();
 
 		new_chunk->print_chunk();
 
