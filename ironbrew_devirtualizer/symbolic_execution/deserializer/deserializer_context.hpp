@@ -28,7 +28,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 	struct deserializer_context final {
 		ir::statement::block* const root;
 
-		std::vector<process_order> chunk_order{ }; // todo reserve for enum count?
+		//std::array<process_order, max_process_order> chunk_order{ };
+		std::vector<process_order> chunk_order{ };
 
 		std::map<const std::uint8_t, constant_type> constant_order_mapping{ };
 
