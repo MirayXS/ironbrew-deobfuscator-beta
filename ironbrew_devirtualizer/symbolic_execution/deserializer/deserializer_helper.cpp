@@ -37,7 +37,6 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         for (auto i = 0u; i < 4; ++i) 
             data_block[i] ^= vm_xor_key;
 
-
         return *reinterpret_cast<std::int32_t*>(data_block.get());
     }
 
