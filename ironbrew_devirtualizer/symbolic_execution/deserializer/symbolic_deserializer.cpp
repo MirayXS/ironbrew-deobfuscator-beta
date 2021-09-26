@@ -11,10 +11,6 @@
 namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 	using namespace ast;
 
-	// todo this implementation might be vulnrable to stack smashing attacks from another obfuscators or incorrect output?
-
-	// todo implement builder design pattern so we wont have to serialize the proto like that?
-
 	struct deserializer_visitor final : ir::abstract_visitor_pattern { // process chunks via symbolic execution
 		explicit deserializer_visitor(symoblic_deserializer& const object) :
 			object(object)
