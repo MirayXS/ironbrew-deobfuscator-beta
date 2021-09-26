@@ -98,8 +98,6 @@ namespace deobf::ast::ir {
             "pcall",
         };
 
-        // symbol table limit is 256 since lua only preserves 256 registers per scope.
-
         // todo weak_symbol_info struct?
 
         struct symbol_info final { // no need a symbol table for each class, function/loops composite a block.
@@ -168,17 +166,28 @@ namespace deobf::ast::ir {
             std::vector<std::shared_ptr<node>> get_children() const override;
 
 
-            explicit block() = default;
+            // extra performance boost :
+            // iterator invalidation, forces 200 rehashings before adding any element to the symbol table (max per scope in lua 200 so is the symbol table limit)
+            // bucket_count must be 200 each symbol table no matter what
+
+            explicit block()
+            {
+                symbol_table.reserve(200);
+            };
 
             explicit block(block* parent) :
                 parent(parent)
-            { }
+            {
+                symbol_table.reserve(200);
+            }
 
             explicit block(block* parent, managed_statement_list body, std::optional<std::shared_ptr<return_statement>> ret) :
                 parent(parent),
                 body(std::move(body)),
                 ret(std::move(ret))
-            { }
+            {
+                symbol_table.reserve(200);
+            }
 
             void accept(abstract_visitor_pattern* visitor) override;
 
