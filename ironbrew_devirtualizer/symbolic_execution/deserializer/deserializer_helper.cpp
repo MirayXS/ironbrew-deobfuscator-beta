@@ -27,7 +27,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         for (auto i = 0u; i < 2; ++i)
             data_block[i] ^= vm_xor_key;
 
-        return *reinterpret_cast<std::int16_t*>(data_block.get()); //(data_block[1] * 256) + data_block[0];
+        return *reinterpret_cast<std::int16_t*>(data_block.get());
     }
 
     const std::uint32_t deserializer_helper::get_32_bits() { // dword since 4
@@ -38,7 +38,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
             data_block[i] ^= vm_xor_key;
 
 
-        return *reinterpret_cast<std::int32_t*>(data_block.get()); //(data_block[3] * 16777216) + (data_block[2] * 65536) + (data_block[1] * 256) + data_block[0];
+        return *reinterpret_cast<std::int32_t*>(data_block.get());
     }
 
     const double deserializer_helper::get_float() { // update about this: reinterpret_cast'ing into double* and reading wouldn't work due to different IEEE standards, so we have to rely on the impelemented way
