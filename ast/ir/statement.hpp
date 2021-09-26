@@ -199,7 +199,7 @@ namespace deobf::ast::ir {
             std::shared_ptr<block> body;
 
             std::string to_string() const override {
-                return "do end";
+                return "do " + body->to_string() + " end";
             }
 
             [[nodiscard]] bool equals(const node* other_node) const override;
