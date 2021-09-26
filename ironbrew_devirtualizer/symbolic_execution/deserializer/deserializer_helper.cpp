@@ -40,7 +40,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         return (data_block[3] * 16777216) + (data_block[2] * 65536) + (data_block[1] * 256) + data_block[0];
     }
 
-    const double deserializer_helper::get_float() {
+    const double deserializer_helper::get_float() { // update about this: reinterpret_cast'ing into double* and reading wouldn't work, so we have to rely on the impelemented way
         const auto left = get_32_bits();
         const auto right = get_32_bits();
 
