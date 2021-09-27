@@ -40,7 +40,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         for (auto i = 0u; i < 4; ++i) 
             data_block[i] ^= vm_xor_key;
 
-        return *reinterpret_cast<std::int32_t*>(data_block.get());
+        return *reinterpret_cast<std::uint32_t*>(data_block.get());
     }
 
     const double deserializer_helper::get_float() { // update about this: reinterpret_cast'ing into double* and reading wouldn't work due to different IEEE standards, so we have to rely on the impelemented way
@@ -81,7 +81,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         auto data_block = std::make_unique<char[]>(length);
         managed_deserializer_string.read(data_block.get(), length);
 
-        std::string result{ data_block.get() };
+        std::string result{ data_block.get(), length };
         for (auto& character : result)
             character ^= vm_xor_key;
 
