@@ -17,7 +17,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
             if (read_offset == -1)
                 return -1;
 
-            std::unique_ptr<char[]> data_block{ new char[read_offset] }; // lazy to make_unique
+            //std::unique_ptr<char[]> data_block{ new char[read_offset] }; // lazy to make_unique
+            auto data_block = std::make_unique<char[]>(read_offset);
             compression_stream.read(data_block.get(), read_offset);
 
             return strtol(data_block.get(), nullptr, 36);
