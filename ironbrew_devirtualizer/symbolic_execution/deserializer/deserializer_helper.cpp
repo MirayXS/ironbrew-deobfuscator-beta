@@ -20,7 +20,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
     }
 
     const std::uint16_t deserializer_helper::get_16_bits() {
-        std::unique_ptr<unsigned char[]> data_block{ new unsigned char[2] }; // lazy to make_unique
+        auto data_block = std::make_unique<unsigned char[]>(2);
+
         managed_deserializer_string.read(reinterpret_cast<char*>(data_block.get()), 2);
 
         for (auto i = 0u; i < 2; ++i)
@@ -30,7 +31,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
     }
 
     const std::uint32_t deserializer_helper::get_32_bits() { // dword since 4
-        std::unique_ptr<unsigned char[]> data_block{ new unsigned char[4] }; // lazy to make_unique
+        auto data_block = std::make_unique<unsigned char[]>(4);
+
         managed_deserializer_string.read(reinterpret_cast<char*>(data_block.get()), 4);
 
         for (auto i = 0u; i < 4; ++i) 
@@ -74,7 +76,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         if (length > managed_deserializer_string.rdbuf()->in_avail())
             return { };
 
-        std::unique_ptr<char[]> data_block{ new char[length] };
+        auto data_block = std::make_unique<char[]>(length);
         managed_deserializer_string.read(data_block.get(), length);
 
         std::string result{ data_block.get() };
@@ -88,11 +90,10 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         const auto length = get_32_bits();
         if (!length)
             return { };
-        else if (length > managed_deserializer_string.rdbuf()->in_avail()) { // safe from buffer overflow attacks and stack smashing at emulator
+        else if (length > managed_deserializer_string.rdbuf()->in_avail()) // safe from buffer overflow attacks and stack smashing at emulator
             throw std::runtime_error("not enough memory for the desired string length? [get_string]");
-        }
 
-        std::unique_ptr<char[]> data_block{ new char[length] };
+        auto data_block = std::make_unique<char[]>(length);
         managed_deserializer_string.read(data_block.get(), length);
         
         auto result = std::string{ data_block.get(), length }; // could use a string_view
