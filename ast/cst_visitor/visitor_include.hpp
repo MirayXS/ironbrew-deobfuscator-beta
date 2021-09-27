@@ -18,6 +18,8 @@ namespace deobf::ast {
 	private:
 		static std::size_t function_counter, parameter_counter, variable_counter; // used for semantic analysis
 		ir::statement::block* current_parse_block = nullptr;
+
+		// todo enter/close scope functions (so we wont have to do the bullshit as we did on cst_visitor::visitFuncbody)
 	public:
 		virtual antlrcpp::Any visitChunk(LuaParser::ChunkContext* ctx) override;
 		virtual antlrcpp::Any visitBlock(LuaParser::BlockContext* ctx) override;
