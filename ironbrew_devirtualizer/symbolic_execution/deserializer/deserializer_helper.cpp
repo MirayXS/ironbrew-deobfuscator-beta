@@ -21,7 +21,6 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
     const std::uint16_t deserializer_helper::get_16_bits() {
         auto data_block = std::make_unique<unsigned char[]>(2);
-
         managed_deserializer_string.read(reinterpret_cast<char*>(data_block.get()), 2);
 
         for (auto i = 0u; i < 2; ++i)
@@ -32,7 +31,6 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
     const std::uint32_t deserializer_helper::get_32_bits() { // dword since 4
         auto data_block = std::make_unique<unsigned char[]>(4);
-
         managed_deserializer_string.read(reinterpret_cast<char*>(data_block.get()), 4);
 
         for (auto i = 0u; i < 4; ++i) 
@@ -88,6 +86,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
     const std::string deserializer_helper::get_string() {
         const auto length = get_32_bits();
+
         if (!length)
             return { };
         else if (length > managed_deserializer_string.rdbuf()->in_avail()) // safe from buffer overflow attacks and stack smashing at emulator
