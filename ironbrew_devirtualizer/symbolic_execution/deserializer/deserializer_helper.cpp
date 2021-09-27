@@ -19,6 +19,10 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         return static_cast<std::uint8_t>(managed_deserializer_string.get() ^ vm_xor_key);
     }
 
+    // we will have to use reinterpret_cast instead of static_cast<unsigned char*>
+    // standard unfortunately doesn't allow to cast between unsigned POD pointer types but we could do static_cast<void*> and back
+    // hence why we are going to use reinterpret_cast<char*>
+
     const std::uint16_t deserializer_helper::get_16_bits() {
         auto data_block = std::make_unique<unsigned char[]>(2);
         managed_deserializer_string.read(reinterpret_cast<char*>(data_block.get()), 2);
