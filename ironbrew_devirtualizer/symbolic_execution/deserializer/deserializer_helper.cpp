@@ -9,8 +9,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
     const inline std::size_t deserializer_helper::get_bits(std::size_t number, std::size_t i, std::size_t j) const {
         // local l = (number / (2 ^ (i - 1))) % (2 ^ ((j - 1) - (i - 1) + 1))
-        const auto lhs = (number / std::pow(2, i - 1));
-        const auto rhs = std::pow(2, (j - 1) - (i - 1) + 1);
+        const auto lhs = number / std::pow(2, i - 1);
+        const auto rhs = std::pow(2, j + 1 - i);
 
         return std::fmodf(lhs, rhs);
     }
