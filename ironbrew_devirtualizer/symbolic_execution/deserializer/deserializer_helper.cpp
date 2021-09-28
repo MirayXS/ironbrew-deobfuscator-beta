@@ -59,7 +59,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         return result;
     }
 
-    const double deserializer_helper::get_float() { // update about this: reinterpret_cast'ing into double* and reading wouldn't work due to different IEEE standards, so we have to rely on the impelemented way
+    const double deserializer_helper::get_float() { // update about this: reinterpret_cast'ing into double* and reading wouldn't work even though those are different ieee standards, so we have to rely on the impelemented way
         const auto left = get_32_bits();
         const auto right = get_32_bits();
 
