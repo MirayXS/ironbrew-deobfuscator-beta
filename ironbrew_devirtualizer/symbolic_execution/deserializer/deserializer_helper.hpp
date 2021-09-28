@@ -13,8 +13,6 @@
 
 #include "deserializer_context.hpp"
 
-// todo fix data loss when converting to integeral types
-
 namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 	struct deserializer_emulator_main;
 
@@ -22,8 +20,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 	private:
 		friend struct deserializer::deserializer_emulator_main;
 
-		static constexpr std::size_t short_size = sizeof(std::int16_t);
-		static constexpr std::size_t sizet_size = sizeof(std::int32_t);
+		static constexpr std::size_t short_size = sizeof std::int16_t;
+		static constexpr std::size_t sizet_size = sizeof std::int32_t;
 
 		const unsigned char vm_xor_key;
 
