@@ -15,42 +15,39 @@
 
 // todo fix data loss when converting to integeral types
 
-namespace deobf::ironbrew_devirtualizer {
-	namespace symbolic_execution::deserializer {
-		struct deserializer_emulator_main;
-		
-		class deserializer_helper final {
-		private:
-			friend struct symbolic_execution::deserializer::deserializer_emulator_main;
+namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
+	struct deserializer_emulator_main;
 
-			static constexpr std::size_t int_size = 4;
-			static constexpr std::size_t short_size = sizeof(std::int16_t);
-			static constexpr std::size_t sizet_size = sizeof(std::int32_t);
+	class deserializer_helper final {
+	private:
+		friend struct deserializer::deserializer_emulator_main;
 
-			const unsigned char vm_xor_key;
+		static constexpr std::size_t short_size = sizeof(std::int16_t);
+		static constexpr std::size_t sizet_size = sizeof(std::int32_t);
 
-			const inline bool get_bits(std::size_t number, std::size_t i) const;
-			const inline std::size_t get_bits(std::size_t number, std::size_t i, std::size_t j) const;
+		const unsigned char vm_xor_key;
 
-			//static const std::string decompress_vm_string(std::string_view vm_string);
+		const inline bool get_bits(std::size_t number, std::size_t i) const;
+		const inline std::size_t get_bits(std::size_t number, std::size_t i, std::size_t j) const;
 
-			std::istringstream managed_deserializer_string;
-		public:
-			deserializer_helper(deserializer_helper&&) = default;
+		//static const std::string decompress_vm_string(std::string_view vm_string);
 
-			explicit deserializer_helper(const std::string& vm_string, const unsigned char xor_key) : managed_deserializer_string{ vm_string }, vm_xor_key(xor_key) { };
+		std::istringstream managed_deserializer_string;
+	public:
+		deserializer_helper(deserializer_helper&&) = default;
+
+		explicit deserializer_helper(const std::string& vm_string, const unsigned char xor_key) : managed_deserializer_string{ vm_string }, vm_xor_key(xor_key) { };
 
 
-			// utilities
-			const std::int8_t get_8_bits();
-			const std::int16_t get_16_bits();
-			const std::int32_t get_32_bits();
-			const double get_float();
+		// utilities
+		const std::int8_t get_8_bits();
+		const std::int16_t get_16_bits();
+		const std::int32_t get_32_bits();
+		const double get_float();
 
-			const std::string get_string(std::size_t length);
-			const std::string get_string();
+		const std::string get_string(std::size_t length);
+		const std::string get_string();
 
-			//[[deprecated]] std::unique_ptr<vm_arch::proto> deserialize(deserializer_context* ctx);
-		};
-	}
+		//[[deprecated]] std::unique_ptr<vm_arch::proto> deserialize(deserializer_context* ctx);
+	};
 }
