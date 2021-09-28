@@ -2,6 +2,9 @@
 #include "deserializer_context.hpp"
 
 namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
+
+    // todo switch to template overrides? has some bad cons
+
     const inline bool deserializer_helper::get_bits(std::size_t number, std::size_t i) const {
         const double bit_mask = std::pow(2, i - 1);
         return std::fmodl(number, bit_mask + bit_mask) >= bit_mask;
