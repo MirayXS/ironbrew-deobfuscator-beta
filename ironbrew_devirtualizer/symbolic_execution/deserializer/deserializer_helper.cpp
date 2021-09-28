@@ -15,32 +15,48 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         return std::fmodf(lhs, rhs);
     }
     
-    const std::uint8_t deserializer_helper::get_8_bits() {
-        return static_cast<std::uint8_t>(managed_deserializer_string.get() ^ vm_xor_key);
+    const std::int8_t deserializer_helper::get_8_bits() {
+        return static_cast<std::int8_t>(managed_deserializer_string.get() ^ vm_xor_key);
     }
 
-    // we will have to use reinterpret_cast instead of static_cast<unsigned char*>
-    // standard unfortunately doesn't allow to cast between unsigned POD pointer types but we could do static_cast<void*> and back
-    // hence why we are going to use reinterpret_cast<char*>
-
-    const std::uint16_t deserializer_helper::get_16_bits() {
-        auto data_block = std::make_unique<unsigned char[]>(2);
+    const std::int16_t deserializer_helper::get_16_bits() {
+        /*auto data_block = std::make_unique<unsigned char[]>(2);
         managed_deserializer_string.read(reinterpret_cast<char*>(data_block.get()), 2);
 
         for (auto i = 0u; i < 2; ++i)
             data_block[i] ^= vm_xor_key;
 
-        return *reinterpret_cast<std::int16_t*>(data_block.get());
+        return *reinterpret_cast<std::int16_t*>(data_block.get());*/
+
+        std::int16_t result = 0;
+
+        auto result_representation = reinterpret_cast<char*>(&result);
+
+        managed_deserializer_string.read(reinterpret_cast<char*>(&result), short_size);
+
+        for (auto i = 0; i < short_size; ++i)
+            result_representation[i] ^= vm_xor_key;
+
+        return result;
     }
 
-    const std::uint32_t deserializer_helper::get_32_bits() { // dword since 4
-        auto data_block = std::make_unique<unsigned char[]>(4);
-        managed_deserializer_string.read(reinterpret_cast<char*>(data_block.get()), 4);
+    const std::int32_t deserializer_helper::get_32_bits() { // dword since 4
+        // easier :
+        /*union {
+            std::int32_t value = 0; // avoid type punning UB with initializing to a default value
+            char bytes[sizet_size];
+        } result;*/
 
-        for (auto i = 0u; i < 4; ++i) 
-            data_block[i] ^= vm_xor_key;
+        std::int32_t result = 0;
 
-        return *reinterpret_cast<std::uint32_t*>(data_block.get());
+        auto result_representation = reinterpret_cast<char*>(&result);
+
+        managed_deserializer_string.read(reinterpret_cast<char*>(&result), sizet_size);
+
+        for (auto i = 0; i < sizet_size; ++i)
+            result_representation[i] ^= vm_xor_key;
+
+        return result;
     }
 
     const double deserializer_helper::get_float() { // update about this: reinterpret_cast'ing into double* and reading wouldn't work due to different IEEE standards, so we have to rely on the impelemented way
@@ -91,7 +107,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
     const std::string deserializer_helper::get_string() {
         const auto length = get_32_bits();
 
-        if (!length)
+        if (!length || length < 0)
             return { };
         else if (length > managed_deserializer_string.rdbuf()->in_avail()) // safe from buffer overflow attacks and stack smashing at emulator
             throw std::runtime_error("not enough memory for the desired string length? [get_string]");
@@ -99,7 +115,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
         auto data_block = std::make_unique<char[]>(length);
         managed_deserializer_string.read(data_block.get(), length);
         
-        auto result = std::string{ data_block.get(), length }; // could use a string_view
+        auto result = std::string{ data_block.get(), static_cast<std::uint16_t>(length) }; // could use a string_view
         for (auto& character : result)
             character ^= vm_xor_key;
 
