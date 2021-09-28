@@ -12,7 +12,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
                     const auto kst_max_size = deserializer_helper_object->get_32_bits();
                     for (auto i = 0ul; i < kst_max_size; ++i) {
                         const auto randomized_order_type = deserializer_helper_object->get_8_bits();
-                        if (const auto kst_type = deserializer_ctx->constant_order_mapping.find(randomized_order_type); kst_type != deserializer_ctx->constant_order_mapping.cend()) {
+                        if (const auto& kst_type = deserializer_ctx->constant_order_mapping.find(randomized_order_type); kst_type != deserializer_ctx->constant_order_mapping.cend()) {
                             switch (kst_type->second) {
                                 case constant_type::string: {
                                     proto->constants.push_back(std::make_unique<vm_arch::constant>(deserializer_helper_object->get_string()));
@@ -53,7 +53,10 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
 
                             auto new_instruction = std::make_unique<vm_arch::instruction>(virtual_opcode, new_instruction_a);
 
-                            switch (const auto instruction_type = static_cast<enum vm_arch::instruction_type>(instruction_bitfield_1)) {
+                            const auto instruction_type = static_cast<enum vm_arch::instruction_type>(instruction_bitfield_1);
+                            new_instruction->type = instruction_type;
+
+                            switch (instruction_type) {
                                 case vm_arch::instruction_type::abc: {
                                     new_instruction->b = deserializer_helper_object->get_16_bits();
                                     new_instruction->c = deserializer_helper_object->get_16_bits();
@@ -73,6 +76,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution::deserializer {
                                     break;
                                 }
                             }
+                            
 
                             proto->instructions.push_back(std::move(new_instruction));
                             //std::cout << new_instruction->virtual_opcode << " " << new_instruction->a << " " << new_instruction->b << " " << new_instruction->c << std::endl;
