@@ -24,7 +24,8 @@ namespace deobf::ironbrew_devirtualizer {
 			friend struct symbolic_execution::deserializer::deserializer_emulator_main;
 
 			static constexpr std::size_t int_size = 4;
-			static constexpr std::size_t sizet_size = 4;
+			static constexpr std::size_t short_size = sizeof(std::int16_t);
+			static constexpr std::size_t sizet_size = sizeof(std::int32_t);
 
 			const unsigned char vm_xor_key;
 
@@ -41,9 +42,9 @@ namespace deobf::ironbrew_devirtualizer {
 
 
 			// utilities
-			const std::uint8_t get_8_bits();
-			const std::uint16_t get_16_bits();
-			const std::uint32_t get_32_bits();
+			const std::int8_t get_8_bits();
+			const std::int16_t get_16_bits();
+			const std::int32_t get_32_bits();
 			const double get_float();
 
 			const std::string get_string(std::size_t length);
