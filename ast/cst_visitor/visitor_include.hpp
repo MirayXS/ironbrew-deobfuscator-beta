@@ -20,6 +20,31 @@ namespace deobf::ast {
 		ir::statement::block* current_parse_block = nullptr;
 
 		// todo enter/close scope functions (so we wont have to do the bullshit as we did on cst_visitor::visitFuncbody)
+
+		std::shared_ptr<ir::statement::block> enter_scope(LuaParser::BlockContext* block) {
+			const auto temp_old_block = current_parse_block;
+			auto generated_block = std::make_shared<ir::statement::block>(current_parse_block); // initialize parent, etc.
+			current_parse_block = generated_block.get();
+
+			ir::statement::managed_statement_list statements_body;
+			for (const auto statement : block->stat()) {
+				auto statement_node = visitStat(statement).as<std::shared_ptr<ir::statement::statement>>();
+				statements_body.push_back(std::move(statement_node));
+			}
+
+			generated_block->body = std::move(statements_body);
+
+			return std::move(generated_block);
+		};
+
+		void exit_scope(LuaParser::BlockContext* block) {
+			if (auto return_statement = block->retstat()) {
+				auto return_node = visitRetstat(return_statement).as<std::shared_ptr<ir::statement::return_statement>>();
+				current_parse_block->ret = std::move(return_node);
+			}
+
+			current_parse_block = current_parse_block->parent;
+		}
 	public:
 		virtual antlrcpp::Any visitChunk(LuaParser::ChunkContext* ctx) override;
 		virtual antlrcpp::Any visitBlock(LuaParser::BlockContext* ctx) override;
