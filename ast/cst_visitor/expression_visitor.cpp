@@ -158,7 +158,7 @@ namespace deobf::ast {
 
 		ir::expression::name_list_t parameter_list;
 		
-		auto function_body = std::make_shared<ir::statement::block>(current_parse_block);
+		auto function_body = enter_scope(ctx->block());
 
 		if (auto ctx_parameters = ctx->parlist()) {
 			if (auto names = ctx_parameters->namelist()) {
@@ -187,7 +187,9 @@ namespace deobf::ast {
 
 		const auto block = ctx->block();
 
-		{
+
+		exit_scope(block);
+		/*{
 			const auto temp_old_block = current_parse_block;
 			current_parse_block = function_body.get();
 
@@ -205,7 +207,7 @@ namespace deobf::ast {
 			}
 
 			current_parse_block = temp_old_block;
-		}
+		}*/
 		
 		auto function_node = std::make_shared<expression::function>(expression::function::function_type::anonymous_t,
 			std::move(parameter_list),
