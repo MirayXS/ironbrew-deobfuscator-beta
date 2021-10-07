@@ -14,15 +14,15 @@ namespace deobf::ironbrew_devirtualizer::devirtualizer_markers {
 	using namespace ast;
 
 	struct marker_decorator : ir::abstract_visitor_pattern { // decorator design pattern on visitor.
-		std::set<std::string_view> rename_list;
 		ir::statement::block* current_block = nullptr;
 
 		bool accept(ir::expression::variable* expression) override;
 		bool accept(ir::statement::block* statement) override;
 
-	protected:
 		explicit marker_decorator(const std::initializer_list<std::string_view>& renames) {
 			rename_list.insert(renames);
 		}
+	protected:
+		std::set<std::string_view> rename_list;
 	};
 }
