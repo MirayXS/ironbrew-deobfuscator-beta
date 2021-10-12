@@ -67,7 +67,12 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 		
 		static instruction_propagator propagator_visitor{ "instruction_opcode_virtual", "instruction_opcode_a", "instruction_opcode_b", "instruction_opcode_c" };
 
+
+		//const auto old_parent = body->parent;
+
 		auto new_block = std::make_unique<ir::statement::block>(body); // parent is body for symbol search cases
+		
+		//body->parent = new_block.get();
 
 		propagator_visitor.rebase_group.first = body;
 
@@ -78,7 +83,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 
 		memoized_virtuals.try_emplace(instruction.virtual_opcode, std::vector<vm_arch::opcode>{ });
 
-		const auto flush_body = [this, &new_block, main_virtual = instruction.virtual_opcode]() {
+		const auto flush_body = [this, &new_block, &body, main_virtual = instruction.virtual_opcode]() {
 			const auto result = new_block.get();
 
 			if (!back_track.empty()) {
@@ -86,9 +91,11 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 				back_track.pop_front();
 
 				// propagate instructions.
+				
 				propagator_visitor.rebase_group.second = result;
 				result->accept(&propagator_visitor);
 
+				
 				// handle garbage locals (todo better way?)
 				for (; !propagator_visitor.local_dfs_stack.empty(); propagator_visitor.local_dfs_stack.pop()) {
 					auto local = propagator_visitor.local_dfs_stack.top();
@@ -102,6 +109,8 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 						}
 					}
 				}
+
+				//body->parent = old_parent;
 
 				const auto opcode_result = std::invoke(callback_functor, front_opcode, result); // forward result to client.
 				if (opcode_result == vm_arch::opcode::op_invalid) {
@@ -199,5 +208,7 @@ namespace deobf::ironbrew_devirtualizer::symbolic_execution {
 		}
 
 		flush_body(); // final body
+
+		//body->parent = old_parent;
 	}
 }

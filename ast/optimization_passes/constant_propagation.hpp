@@ -3,7 +3,7 @@
 #include "base_optimizer.hpp"
 
 // semantic analysis
-namespace deobf::optimization_passes {
+namespace deobf::ast::optimization_passes {
 	struct constant_propagation final : private base_optimizer {
 		void optimize() override;
 

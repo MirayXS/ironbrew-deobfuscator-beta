@@ -7,9 +7,7 @@
 #include <mutex>
 
 
-namespace deobf::optimization_passes {
-	using namespace ast;
-
+namespace deobf::ast::optimization_passes {
 	struct constant_propagation_visitor final : ir::abstract_visitor_pattern {
 
 		std::optional<std::shared_ptr<ir::expression::expression>> optimize(ir::expression::variable* expression) { // constant propagation

@@ -6,6 +6,8 @@ namespace deobf::vm_arch {
 #pragma pack(push, 1)
 	struct instruction final {
 		vm_arch::opcode op{ };
+		vm_arch::instruction_type type{ }; // couldve made a mapping but lazy this is for debugging
+
 		double virtual_opcode;
 		std::uint16_t a;
 

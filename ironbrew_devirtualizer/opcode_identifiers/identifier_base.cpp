@@ -47,6 +47,7 @@ namespace deobf::ironbrew_devirtualizer::opcode_identifiers {
 
 		// custom vm identifiers
 		handler_dispatch_table.emplace_back(new newstack_identifier);
+		handler_dispatch_table.emplace_back(new settop_identifier);
 
 		handler_interface* current_handler = handler.get();
 		for (auto& opcode_handler : handler_dispatch_table) {

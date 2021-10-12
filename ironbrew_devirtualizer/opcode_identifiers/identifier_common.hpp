@@ -45,3 +45,4 @@
 
 // custom vm identifiers
 #include "identifiers/custom_vm/newstack_identifier.hpp"
+#include "identifiers/custom_vm/settop_identifier.hpp"

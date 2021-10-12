@@ -3,7 +3,7 @@
 #include "ast/ir/node.hpp"
 
 // this is the base class that allows to create more compiler passes
-namespace deobf::optimization_passes {
+namespace deobf::ast::optimization_passes {
 	struct base_optimizer {
 		//static void run();
 		virtual void optimize() = 0;

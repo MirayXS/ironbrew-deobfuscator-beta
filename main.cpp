@@ -1,6 +1,4 @@
 #include <iostream>
-
-// include directive : ../generated_files
 #include "LuaLexer.h"
 #include "LuaParser.h"
 //#include "parser_combinator/parser_combinator.hpp"
@@ -9,9 +7,9 @@
 
 #include "ast/cst_visitor/visitor_include.hpp"
 
-#include "optimization_passes/base_optimizer.hpp"
-#include "optimization_passes/constant_folding.hpp"
-#include "optimization_passes/constant_propagation.hpp"
+#include "ast/optimization_passes/base_optimizer.hpp"
+#include "ast/optimization_passes/constant_folding.hpp"
+#include "ast/optimization_passes/constant_propagation.hpp"
 
 #include "ironbrew_devirtualizer/devirtualizer_main.hpp"
 
@@ -47,11 +45,11 @@ int main(int argc, char** argv) {
 
     std::cout << "pass propagator\n";
 
-    deobf::optimization_passes::constant_propagation propagator(ast_tree.get());
+    deobf::ast::optimization_passes::constant_propagation propagator(ast_tree.get());
     propagator.optimize();
 
     std::cout << "pass folder\n";
-    deobf::optimization_passes::constant_folding folder(ast_tree.get());
+    deobf::ast::optimization_passes::constant_folding folder(ast_tree.get());
     folder.optimize();
 
     // passes done

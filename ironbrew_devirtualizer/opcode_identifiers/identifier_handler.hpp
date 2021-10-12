@@ -1,5 +1,5 @@
 #pragma once
-#include "./optimization_passes/base_optimizer.hpp"
+#include "./ast/optimization_passes/base_optimizer.hpp"
 #include "./ast/ir/abstract_visitor_pattern.hpp"
 #include "./ast/ir/node.hpp"
 

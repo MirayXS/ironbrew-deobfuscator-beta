@@ -3,6 +3,7 @@
 
 namespace deobf::ironbrew_devirtualizer::devirtualizer_markers {
 	using namespace ast;
+
 	struct deserializer_marker_visitor final : marker_decorator {
 		using marker_decorator::marker_decorator;
 

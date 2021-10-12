@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./optimization_passes/base_optimizer.hpp"
+#include "./ast/optimization_passes/base_optimizer.hpp"
 #include "./ast/ir/abstract_visitor_pattern.hpp"
 #include "./ast/ir/node.hpp"
 #include "./ast/ir/statement.hpp"
@@ -22,6 +22,7 @@ namespace deobf::ironbrew_devirtualizer::devirtualizer_markers {
 		explicit marker_decorator(const std::initializer_list<std::string_view>& renames) {
 			rename_list.insert(renames);
 		}
+
 	protected:
 		std::set<std::string_view> rename_list;
 	};

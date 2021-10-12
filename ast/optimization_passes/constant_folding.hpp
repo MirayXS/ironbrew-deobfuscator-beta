@@ -2,7 +2,7 @@
 
 #include "base_optimizer.hpp"
 
-namespace deobf::optimization_passes {
+namespace deobf::ast::optimization_passes {
 	struct constant_folding final : private base_optimizer {
 		void optimize() override;
 

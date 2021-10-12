@@ -7,9 +7,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace deobf::optimization_passes {
-	using namespace ast;
-
+namespace deobf::ast::optimization_passes {
 	struct folding_visitor final : ir::abstract_visitor_pattern {
 		std::optional<std::shared_ptr<ir::expression::expression>> optimize(ir::expression::unary_expression* expression) { // will cause a shared_ptr duplicate?
 			using operation_t = typename ir::expression::unary_expression::operation_t;
