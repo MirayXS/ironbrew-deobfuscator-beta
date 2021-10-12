@@ -167,9 +167,8 @@ namespace deobf::optimization_passes {
 				right = binary_right;
 
 			std::visit([this, &expression](auto& left_expression, auto& right_expression) {
-				// const/volatile blah blah
-				using left_expression_t = std::remove_pointer_t<std::decay_t<decltype(left_expression)>>;
-				using right_expression_t = std::remove_pointer_t<std::decay_t<decltype(right_expression)>>;
+				using left_expression_t = std::decay_t<decltype(left_expression)>;
+				using right_expression_t = std::decay_t<decltype(right_expression)>;
 
 				using binary_expression_t = typename std::shared_ptr<ir::expression::binary_expression>;
 				using unary_expression_t = typename std::shared_ptr<ir::expression::unary_expression>;
