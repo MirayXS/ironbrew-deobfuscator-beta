@@ -18,12 +18,11 @@ this project can't be compiled by users yet since unfinished, only if you want y
 
 Intermediate Level (AST & etc) : fully done.
 
-Low Level : still in work.
+Low Level : WIP
 
 # TODO
 
-Deobfuscator TODO list : low-level control flow passes only: topological sorting for nodes with kosaraju's algorithm for SCC detection (better control flow output and ordered nodes.), string decryption, undo test spam mutate garbage,
-also do we need to do inlining ? not being really used as much in scripts, on inlining instead of MOVE instructions and CALL replaced as JMP to relative offsets
+Deobfuscator TODO list : low-level control flow passes only: topological sorting for bblocks (SCC detection etc methods) (better control flow output when converting to insns'), string decryption, undo test spam mutate garbage,
+also do we need to do inlining ? not being really used as much in scripts, on inlining instead of MOVE instructions and CALL replaced as JMP to relative offsets and branches and dominators are being modified.
 
-
-aswell as preccedor/succesor architecture for basic blocks, might help us with DCE so we can eliminate blocks that aren't being referenced?
+aswell as preccedor/succesor architecture for basic blocks and DCE structure.
