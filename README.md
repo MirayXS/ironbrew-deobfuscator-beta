@@ -26,7 +26,7 @@ Deobfuscator TODO list :
 
 AST Level : fix some bugs at super op handler (very rare)
 
-low-level control flow passes only: topological sorting for bblocks (SCC detection etc methods) (better control flow output when converting to insns'), string decryption, undo test spam mutate garbage,
+low-level control flow passes only (but kinda useless since nobody uses the controlflow features except string enc): topological sorting for bblocks (SCC detection etc methods) (better control flow output when converting to insns'), string decryption, undo test spam mutate garbage,
 also do we need to do inlining ? not being really used as much in scripts, on inlining instead of MOVE instructions and CALL replaced as JMP to relative offsets and branches and dominators are being modified.
 
 aswell as preccedor/succesor architecture for basic blocks and DCE structure.
