@@ -18,7 +18,7 @@ this project can't be compiled by users yet since unfinished, only if you want y
 
 Intermediate Level (AST & etc) : fully done.
 
-Low Level : WIP
+Low Level : WIP.
 
 # TODO
 
