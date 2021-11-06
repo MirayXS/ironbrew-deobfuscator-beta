@@ -9,10 +9,11 @@ namespace deobf::ast::optimization_passes {
 		virtual void optimize() = 0;
 		virtual ~base_optimizer() noexcept = default;
 
+	protected:
 		explicit base_optimizer(ast::ir::node* root) :
 			root(root)
 		{ }
-	protected:
+
 		ast::ir::node* root = nullptr;
 	};
 }
