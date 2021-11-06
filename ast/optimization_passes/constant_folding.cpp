@@ -147,6 +147,7 @@ namespace deobf::ast::optimization_passes {
 			return true;
 		}
 
+		// new version (TODO upd) : https://cdn.discordapp.com/attachments/825170069142634546/900093041631698984/unknown.png
 		bool accept(ir::expression::binary_expression* expression) override { // fold nested binary expressions, theres no other case we have to deal with folding one.
 			//std::cout << expression->to_string() << std::endl;
 
